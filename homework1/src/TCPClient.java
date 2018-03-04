@@ -193,6 +193,7 @@ public class TCPClient {
                         System.out.println("Throughput: " + throughput + ".");
                         out.writeBoolean(true); //acknowledgement byte
                     }
+                    System.out.println("spinning...");
                 }
 
                 Thread.currentThread().sleep(1000);

@@ -137,6 +137,7 @@ public class TCPServer {
                         amountOfBytesToSend = totalAmountPossibleToSend;
                         amountOfBytesLeftToSend -= totalAmountPossibleToSend;
                     }
+                    System.out.println("about to write");
                     out.write(bytes, bytesSent, amountOfBytesToSend);
                     System.out.println("Sent back " + bytesSent + " to the client.");
 
