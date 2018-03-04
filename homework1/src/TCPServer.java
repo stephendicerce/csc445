@@ -87,7 +87,7 @@ public class TCPServer {
         }
     }
 
-    public void measureTransferRates(int firstsize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
+    public void measureTransferRates(int firstSize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
         DataInputStream in = null;
         DataOutputStream out = null;
         byte[] bytes;
@@ -100,7 +100,7 @@ public class TCPServer {
             for (int i = 0; i < 5; ++i) {
                 switch (i) {
                     case 0:
-                        bytes = new byte[firstsize];
+                        bytes = new byte[firstSize];
                         break;
                     case 1:
                         bytes = new byte[secondSize];
@@ -119,13 +119,28 @@ public class TCPServer {
                 while (bytes[bytes.length - 1] == 0) { // This line serves as a check to make sure the entire array was received. The client will always set the last value of the array to 1 before sending
                     in.readFully(bytes);
                     System.out.println("receiving " + bytes.length + " bytes..");
-                    receiveTime = System.nanoTime();
-                    System.out.println("Received a message of " + serverSocket.getReceiveBufferSize() + "at " + receiveTime);
+                    System.out.println("Received a message.");
                 }
 
-                out.write(bytes, 0, bytes.length);
-                sendTime = System.nanoTime();
-                System.out.println("Sent back " + bytes.length + "to the client at " +System.nanoTime());
+                int bytesSent = 0;
+                int amountOfBytesLeftToSend = bytes.length;
+                int totalAmountPossibleToSend = socket.getSendBufferSize();
+                int amountOfBytesToSend;
+                boolean finished = false;
+
+                while(!finished) {
+                    if(amountOfBytesLeftToSend-totalAmountPossibleToSend<0) {
+                        amountOfBytesToSend = amountOfBytesLeftToSend;
+                        finished = true;
+                    } else {
+                        amountOfBytesToSend = totalAmountPossibleToSend;
+                        amountOfBytesLeftToSend -= totalAmountPossibleToSend;
+                    }
+                    out.write(bytes, bytesSent, amountOfBytesToSend);
+                    System.out.println("Sent back " + amountOfBytesToSend + " to the client.");
+
+                    in.readBoolean();
+                }
             }
         } catch(IOException e) {
             System.out.println("IO Exception has occurred.");

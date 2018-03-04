@@ -166,20 +166,30 @@ public class TCPClient {
                         bytes[j] = 1;
                     }
                 }
-                bytes[bytes.length-1] = 1;
                 out.write(bytes, 0, bytes.length);
                 startTime = System.nanoTime();
                 //System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
-                int count = 1;
-                while ((socket.getReceiveBufferSize()*count) < (receivedBytes.length + socket.getReceiveBufferSize())) {
-                    if(in.read(receivedBytes, 0 ,receivedBytes.length) != -1) {
+                int remainingBytesToTransfer = bytes.length;
+                int totalAmountPossibleToReceive = socket.getReceiveBufferSize();
+                boolean finished = false;
+
+                while (!finished) {
+                    int bytesTransferred;
+                    if(remainingBytesToTransfer - totalAmountPossibleToReceive < 0) {
+                        bytesTransferred = remainingBytesToTransfer;
+                        finished = true;
+                    } else {
+                        bytesTransferred = totalAmountPossibleToReceive;
+                    }
+                    remainingBytesToTransfer -= totalAmountPossibleToReceive;
+                    if(in.read(receivedBytes, 0 ,bytesTransferred) != -1) {
                         endTime = System.nanoTime();
-                        System.out.println("The time to transfer " + receivedBytes.length + " bytes from the server is: " + (endTime - startTime) + ".");
+                        System.out.println("The time to transfer " + bytesTransferred + " bytes from the server is: " + (endTime - startTime) + ".");
                         double elapsedTime = (endTime - startTime) / 1000000000.0;
-                        double throughput = socket.getReceiveBufferSize() / elapsedTime;
+                        double throughput = bytesTransferred / elapsedTime;
 
                         System.out.println("Throughput: " + throughput + ".");
-                        ++count;
+                        out.writeBoolean(true); //acknowledgement byte
                     }
                 }
 
