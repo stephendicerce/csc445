@@ -29,8 +29,8 @@ public class UDPServer {
 
         for(int i=0; i<3; ++i) {
             if(i==0) {
-               byteArray = new byte[secondSize];
-               received = new byte[secondSize];
+               byteArray = new byte[thirdSize];
+               received = new byte[thirdSize];
             } else if(i==1) {
                 byteArray = new byte[secondSize];
                 received = new byte[secondSize];
