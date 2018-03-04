@@ -62,6 +62,7 @@ public class UDPServer {
                     System.out.println("IO Exception has occurred.");
                 }
             }
+            System.out.println(i);
         }
         socket.close();
     }
