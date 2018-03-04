@@ -72,7 +72,7 @@ public class UDPClient {
                 else
                     System.out.println("The amount of time to send " + thirdSize + " packet(s) is: " + elapsedTime);
 
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(5000);
             }
         } catch(IOException e) {
             System.out.println("IOException has occurred");
