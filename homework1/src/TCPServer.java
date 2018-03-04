@@ -117,12 +117,10 @@ public class TCPServer {
                 }
 
                 while (bytes[bytes.length - 1] == 0) { // This line serves as a check to make sure the entire array was received. The client will always set the last value of the array to 1 before sending
-                    if (in.read(bytes, 0, bytes.length) != -1) { // Reads a byte array in with an offset set to 0 and length set to the first size according to the user
-                        System.out.println("receiving " + bytes.length + " bytes..");
-                        receiveTime = System.nanoTime();
-                        System.out.println("Received a message of " + bytes.length + "at " + receiveTime);
-                    }
-                    System.out.println(".................");
+                    in.readFully(bytes);
+                    System.out.println("receiving " + bytes.length + " bytes..");
+                    receiveTime = System.nanoTime();
+                    System.out.println("Received a message of " + bytes.length + "at " + receiveTime);
                 }
 
                 out.write(bytes, 0, bytes.length);

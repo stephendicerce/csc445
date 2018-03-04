@@ -173,10 +173,10 @@ public class TCPClient {
                 System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
 
                 while (receivedBytes[receivedBytes.length-1] == 0) {
-                    if (in.read(receivedBytes, 0, receivedBytes.length) != -1) {
+                        in.readFully(receivedBytes);
                         endTime = System.nanoTime();
-                        System.out.println("The end time to transfer " + receivedBytes.length + "bytes from the server is: " + endTime + ".");
-                    }
+                        System.out.println("The end time to transfer " + receivedBytes.length + " bytes from the server is: " + endTime + ".");
+
                 }
 
                 Thread.currentThread().sleep(1000);
