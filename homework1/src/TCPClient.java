@@ -167,7 +167,7 @@ public class TCPClient {
                     }
                 }
                 out.write(bytes, 0, bytes.length);
-                System.out.println(bytes.length + "written to server.");
+                //System.out.println(bytes.length + "written to server.");
                 startTime = System.nanoTime();
                 //System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
                 int remainingBytesToTransfer = bytes.length;
