@@ -55,7 +55,6 @@ public class UDPServer {
                     if (received[received.length - 1] == 1) {
                         System.out.println("Whole message received.");
                         running = false;
-                        continue;
                     }
                     socket.send(packet);
 
