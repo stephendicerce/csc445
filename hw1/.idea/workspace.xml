@@ -3,8 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="75bee15e-21b1-44da-9127-8a1cd7d71e5d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/../homework1/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../homework1/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/../homework1/src/UDPClient.java" afterPath="$PROJECT_DIR$/../homework1/src/UDPClient.java" />
+      <change beforePath="$PROJECT_DIR$/../homework1/src/Main.java" afterPath="$PROJECT_DIR$/../homework1/src/Main.java" />
+      <change beforePath="$PROJECT_DIR$/../homework1/src/UDPClient.class" afterPath="$PROJECT_DIR$/../homework1/src/UDPClient.class" />
+      <change beforePath="$PROJECT_DIR$/../homework1/src/UDPServer.class" afterPath="$PROJECT_DIR$/../homework1/src/UDPServer.class" />
       <change beforePath="$PROJECT_DIR$/../homework1/src/UDPServer.java" afterPath="$PROJECT_DIR$/../homework1/src/UDPServer.java" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />

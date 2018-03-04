@@ -52,12 +52,16 @@ public class UDPServer {
                     packet = new DatagramPacket(byteArray, byteArray.length, address, port);
                     received = packet.getData();
 
+                    int count = 1;
+                    System.out.println("Packets received: " + count);
+                    ++count;
 
                     if (received[received.length - 1] == 1) {
                         System.out.println("Whole message received.");
                         running = false;
                     }
                     socket.send(packet);
+
 
                 } catch (IOException e) {
                     System.out.println("IO Exception has occurred.");

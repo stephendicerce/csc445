@@ -23,7 +23,7 @@ public class Main {
 
                 if (type.equalsIgnoreCase("client")) {
                     systemSet = true;
-                    System.out.println("Please enter the client's hostname.");
+                    System.out.println("Please enter the hostname of the server you wish to connect to.");
                     hostname = kb.nextLine();
                     System.out.println("Enter the port number to operate on.");
                     port = kb.nextInt();
@@ -55,7 +55,7 @@ public class Main {
 
                 if (type.equalsIgnoreCase("client")) {
                     systemSet = true;
-                    System.out.println("Please enter the client's hostname.");
+                    System.out.println("Please enter the hostname of the server you wish to connect to.");
                     hostname = kb.nextLine();
                     System.out.println("Enter the port number to operate on.");
                     port = kb.nextInt();
