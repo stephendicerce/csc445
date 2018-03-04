@@ -36,8 +36,8 @@ public class UDPClient {
             for (int i = 0; i < 3; ++i) {
                 switch (i) {
                     case 0:
-                        byteArray = new byte[thirdSize];
-                        receivedBytes = new byte[thirdSize];
+                        byteArray = new byte[firstSize];
+                        receivedBytes = new byte[firstSize];
                         break;
                     case 1:
                         byteArray = new byte[secondSize];
@@ -66,7 +66,7 @@ public class UDPClient {
                 elapsedTime = System.nanoTime()-startTime;
 
                 if(i==0)
-                    System.out.println("The amount of time to send " + thirdSize + " packet(s) is: " + elapsedTime);
+                    System.out.println("The amount of time to send " + firstSize + " packet(s) is: " + elapsedTime);
                 else if(i==1)
                     System.out.println("The amount of time to send " + secondSize + " packet(s) is: " + elapsedTime);
                 else
