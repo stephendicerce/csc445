@@ -119,16 +119,18 @@ public class TCPServer {
                 while (bytes[bytes.length - 1] == 0) { // This line serves as a check to make sure the entire array was received. The client will always set the last value of the array to 1 before sending
                     in.readFully(bytes);
                     System.out.println("receiving " + bytes.length + " bytes..");
-                    System.out.println("Received a message.");
                 }
 
+                System.out.println("defining variables");
                 int bytesSent = 0;
                 int amountOfBytesLeftToSend = bytes.length;
                 int totalAmountPossibleToSend = socket.getSendBufferSize();
                 int amountOfBytesToSend;
                 boolean finished = false;
+                System.out.println("done defining variables");
 
                 while(!finished) {
+                    System.out.println("in while loop");
                     if(amountOfBytesLeftToSend-totalAmountPossibleToSend<0) {
                         amountOfBytesToSend = amountOfBytesLeftToSend;
                         bytesSent += amountOfBytesToSend;
