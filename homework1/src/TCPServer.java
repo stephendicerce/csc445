@@ -142,7 +142,7 @@ public class TCPServer {
                     System.out.println("about to write");
 
                     out.write(bytes, bytesSent, amountOfBytesToSend);
-                    bytesSent += amountOfBytesToSend;
+                    bytesSent = amountOfBytesToSend;
                     System.out.println("Sent back " + bytesSent + " to the client.");
 
                     in.readBoolean();
