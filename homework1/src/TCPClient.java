@@ -167,12 +167,11 @@ public class TCPClient {
                     }
                 }
                 bytes[bytes.length-1] = 1;
-                int count = 1;
                 out.write(bytes, 0, bytes.length);
                 startTime = System.nanoTime();
                 //System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
-
-                while (receivedBytes[receivedBytes.length-1] == 0) {
+                int count = 1;
+                while ((socket.getReceiveBufferSize()*count) < (receivedBytes.length + socket.getReceiveBufferSize())) {
                     if(in.read(receivedBytes, 0 ,receivedBytes.length) != -1) {
                         endTime = System.nanoTime();
                         System.out.println("The time to transfer " + receivedBytes.length + " bytes from the server is: " + (endTime - startTime) + ".");
@@ -180,7 +179,7 @@ public class TCPClient {
                         double throughput = socket.getReceiveBufferSize() / elapsedTime;
 
                         System.out.println("Throughput: " + throughput + ".");
-
+                        ++count;
                     }
                 }
 

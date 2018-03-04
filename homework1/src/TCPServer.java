@@ -120,7 +120,7 @@ public class TCPServer {
                     in.readFully(bytes);
                     System.out.println("receiving " + bytes.length + " bytes..");
                     receiveTime = System.nanoTime();
-                    System.out.println("Received a message of " + bytes.length + "at " + receiveTime);
+                    System.out.println("Received a message of " + serverSocket.getReceiveBufferSize() + "at " + receiveTime);
                 }
 
                 out.write(bytes, 0, bytes.length);
