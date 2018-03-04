@@ -86,4 +86,66 @@ public class TCPServer {
             System.out.println("Could not get Input Stream");
         }
     }
+
+    public void measureTransferRates(int firstsize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
+        DataInputStream in = null;
+        DataOutputStream out = null;
+        byte[] bytes;
+        long receiveTime;
+        long sendTime;
+
+        try {
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+            for (int i = 0; i < 5; ++i) {
+                switch (i) {
+                    case 0:
+                        bytes = new byte[firstsize];
+                        break;
+                    case 1:
+                        bytes = new byte[secondSize];
+                        break;
+                    case 2:
+                        bytes = new byte[thirdSize];
+                        break;
+                    case 3:
+                        bytes = new byte[fourthSize];
+                        break;
+                    default:
+                        bytes = new byte[fifthSize];
+                        break;
+                }
+
+                while (bytes[bytes.length - 1] == 0) { // This line serves as a check to make sure the entire array was received. The client will always set the last value of the array to 1 before sending
+                    if (in.read(bytes, 0, bytes.length) != -1) { // Reads a byte array in with an offset set to 0 and length set to the first size according to the user
+                        System.out.println("receiving " + bytes.length + " bytes..");
+                        receiveTime = System.nanoTime();
+                        System.out.println("Received a message of " + bytes.length + "at " + receiveTime);
+                    }
+                    System.out.println(".................");
+                }
+
+                out.write(bytes, 0, bytes.length);
+                sendTime = System.nanoTime();
+                System.out.println("Sent back " + bytes.length + "to the client at " +System.nanoTime());
+            }
+        } catch(IOException e) {
+            System.out.println("IO Exception has occurred.");
+        }
+        if(in != null && out != null) {
+            try {
+                in.close();
+                out.close();
+                socket.close();
+                serverSocket.close();
+            } catch (IOException e) {
+                System.out.println("IOException");
+            } catch (NullPointerException e) {
+                System.out.println("Null pointer Exception");
+            }
+        }
+    }
+
+
+
 }

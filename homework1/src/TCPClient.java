@@ -3,6 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class TCPClient {
 
@@ -11,6 +12,8 @@ public class TCPClient {
     private int port;
     private DataInputStream in = null;
     private DataOutputStream out = null;
+
+
 
     TCPClient(String hostName, int port) {
         this.hostName = hostName;
@@ -115,17 +118,93 @@ public class TCPClient {
             System.out.println("Thread interrupted.");
         }
 
+    }
+
+    public void measureTransferRates(int firstsize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
+        long startTime;
+        long endTime;
+
+        try {
+            in = new DataInputStream(socket.getInputStream());
+        } catch(IOException e) {
+            System.out.println("Could not get the DataInputStream from the socket.");
+        }
+        try {
+            out = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            System.out.println("Couldn't get DataOutputStream from the socket.");
+        }
+
+        try{
+            for(int i=0; i<5; ++i) {
+                byte[] bytes;
+                byte[] receivedBytes;
+                switch (i) {
+                    case 0: bytes = new byte[firstsize];
+                    receivedBytes = new byte[firstsize];
+                    break;
+                    case 1: bytes = new byte[secondSize];
+                    receivedBytes = new byte[secondSize];
+                    break;
+                    case 2: bytes = new byte[thirdSize];
+                    receivedBytes = new byte[thirdSize];
+                    break;
+                    case 3: bytes = new byte[fourthSize];
+                    receivedBytes = new byte[fourthSize];
+                    break;
+                    default: bytes = new byte[fifthSize];
+                    receivedBytes = new byte[fifthSize];
+                    break;
+                }
+
+                for(int j=0, length = bytes.length; i<length; ++j) {
+                    Random r = new Random();
+                    int randomInt = r.nextInt(1);
+                    if(randomInt == 0) {
+                        bytes[j] = 0;
+                    } else {
+                        bytes[j] = 1;
+                    }
+                }
+                bytes[bytes.length-1] = 1;
+                int count = 1;
+                out.write(bytes, 0, bytes.length);
+                startTime = System.nanoTime();
+                System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
+
+                while (receivedBytes[receivedBytes.length-1] == 0) {
+                    if (in.read(receivedBytes, 0, receivedBytes.length) != -1) {
+                        endTime = System.nanoTime();
+                        System.out.println("The end time to transfer " + receivedBytes.length + "bytes from the server is: " + endTime + ".");
+                    }
+                }
+
+                Thread.currentThread().sleep(1000);
+            }
+        } catch(IOException e) {
+            System.out.println("IO Exception");
+        } catch(InterruptedException e) {
+            System.out.println("Thread Interrupted");
+        }
+
+
+
+    }
+
+    public boolean close() {
         if(in != null && out != null) {
             try {
                 in.close();
                 out.close();
                 socket.close();
+                return true;
             } catch (IOException e) {
                 System.out.println("IOException");
             } catch (NullPointerException e) {
                 System.out.println("Null pointer Exception");
             }
         }
+        return false;
     }
 
 }
