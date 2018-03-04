@@ -157,7 +157,7 @@ public class TCPClient {
                     break;
                 }
 
-                for(int j=0, length = bytes.length; i<length; ++j) {
+                for(int j=0, length = bytes.length; j<length; ++j) {
                     Random r = new Random();
                     int randomInt = r.nextInt(1);
                     if(randomInt == 0) {

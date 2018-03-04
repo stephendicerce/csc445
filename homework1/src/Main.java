@@ -54,7 +54,7 @@ public class Main {
                             System.out.println("You didn't enter client or server. Please try again.");
                         }
                     } while (!systemSet);
-                    
+
                 } else if (tcpType.equalsIgnoreCase("measure throughput")) {
                     tcpTypeBoolean = true;
                     System.out.println("Enter whether this computer is a server or a client.(Start the server first)");
