@@ -131,13 +131,14 @@ public class TCPServer {
                 while(!finished) {
                     if(amountOfBytesLeftToSend-totalAmountPossibleToSend<0) {
                         amountOfBytesToSend = amountOfBytesLeftToSend;
+                        bytesSent += amountOfBytesToSend;
                         finished = true;
                     } else {
                         amountOfBytesToSend = totalAmountPossibleToSend;
                         amountOfBytesLeftToSend -= totalAmountPossibleToSend;
                     }
                     out.write(bytes, bytesSent, amountOfBytesToSend);
-                    System.out.println("Sent back " + amountOfBytesToSend + " to the client.");
+                    System.out.println("Sent back " + bytesSent + " to the client.");
 
                     in.readBoolean();
                 }
