@@ -120,7 +120,7 @@ public class TCPClient {
 
     }
 
-    public void measureTransferRates(int firstsize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
+    public void measureTransferRates(int firstSize, int secondSize, int thirdSize, int fourthSize, int fifthSize) {
         long startTime;
         long endTime;
 
@@ -140,21 +140,26 @@ public class TCPClient {
                 byte[] bytes;
                 byte[] receivedBytes;
                 switch (i) {
-                    case 0: bytes = new byte[firstsize];
-                    receivedBytes = new byte[firstsize];
-                    break;
+                    case 0: bytes = new byte[firstSize];
+                        receivedBytes = new byte[firstSize];
+                        System.out.println("working on " + firstSize + "bytes.");
+                        break;
                     case 1: bytes = new byte[secondSize];
-                    receivedBytes = new byte[secondSize];
-                    break;
+                        receivedBytes = new byte[secondSize];
+                        System.out.println("working on " + secondSize + "bytes.");
+                        break;
                     case 2: bytes = new byte[thirdSize];
-                    receivedBytes = new byte[thirdSize];
-                    break;
+                        receivedBytes = new byte[thirdSize];
+                        System.out.println("working on " + thirdSize + "bytes.");
+                        break;
                     case 3: bytes = new byte[fourthSize];
-                    receivedBytes = new byte[fourthSize];
-                    break;
+                        receivedBytes = new byte[fourthSize];
+                        System.out.println("working on " + fourthSize + "bytes.");
+                        break;
                     default: bytes = new byte[fifthSize];
-                    receivedBytes = new byte[fifthSize];
-                    break;
+                        receivedBytes = new byte[fifthSize];
+                        System.out.println("working on " + fifthSize + "bytes.");
+                        break;
                 }
 
                 for(int j=0, length = bytes.length; j<length; ++j) {
@@ -194,6 +199,7 @@ public class TCPClient {
                         System.out.println("Throughput: " + throughput + ".");
                         Thread.currentThread().sleep(1000);
                         out.writeBoolean(true); //acknowledgement byte
+                        System.out.println("Sent ack");
                     } else {
                         System.out.println("spinning...");
                     }

@@ -146,6 +146,7 @@ public class TCPServer {
                     System.out.println("Sent back " + bytesSent + " to the client.");
 
                     in.readBoolean();
+                    System.out.println("received ack");
                 }
             }
         } catch(IOException e) {
