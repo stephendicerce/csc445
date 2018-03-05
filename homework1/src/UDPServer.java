@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 
 public class UDPServer {
 
@@ -96,20 +97,27 @@ public class UDPServer {
                         numberOfMessages = thirdNumber;
                 }
                 InetAddress address = null;
+                int count = 0;
                 int sendToPort = 0;
                 int whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
-                    DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
-                    socket.receive(receivedPacket);
-                    whereToStart += messageSize;
-                    address = receivedPacket.getAddress();
-                    sendToPort = receivedPacket.getPort();
-
-
+                    socket.setSoTimeout(3000);
+                    try {
+                        DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
+                        socket.receive(receivedPacket);
+                        whereToStart += messageSize;
+                        address = receivedPacket.getAddress();
+                        sendToPort = receivedPacket.getPort();
+                        System.out.println(j);
+                    } catch (SocketTimeoutException e){
+                        ++count;
+                    }
                 }
                 DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
                 socket.send(ack);
-
+                if (count>0) {
+                    System.out.println(count + "packets lost.");
+                }
                 /*
                 whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
