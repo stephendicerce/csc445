@@ -261,7 +261,10 @@ public class TCPClient {
                 long startTime = System.nanoTime();
                 long elapsedTime = 0;
                 for(int k=0; k<numberOfMessages; ++k) {
-                    messageEnd = messageStart + messageSize;
+                    if(messageStart + messageSize>bytes.length)
+                        messageEnd = bytes.length;
+                    else
+                        messageEnd = messageStart + messageSize;
                     out.write(bytes, messageStart, messageEnd);
                     messageStart = messageEnd;
                     //System.out.println("before boolean");
