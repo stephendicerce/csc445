@@ -17,7 +17,7 @@ public class UDPServer {
     public boolean openSocket() {
         try {
             socket = new DatagramSocket(port);
-            socket.setSoTimeout(3000);
+            socket.setSoTimeout(2000);
             return true;
         } catch(IOException e) {
             return false;
