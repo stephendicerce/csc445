@@ -126,7 +126,8 @@ public class UDPClient {
                     whereToStart += messageSize;
                     System.out.println(j);
 
-
+                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
+                    socket.receive(ack);
                 }
 
                 DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);

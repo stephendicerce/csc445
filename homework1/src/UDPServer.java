@@ -17,7 +17,6 @@ public class UDPServer {
     public boolean openSocket() {
         try {
             socket = new DatagramSocket(port);
-            socket.setSoTimeout(2000);
             return true;
         } catch(IOException e) {
             return false;
@@ -103,22 +102,19 @@ public class UDPServer {
                 int whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
 
-                    try {
                         DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
                         socket.receive(receivedPacket);
                         whereToStart += messageSize;
                         address = receivedPacket.getAddress();
                         sendToPort = receivedPacket.getPort();
                         System.out.println(j);
-                    } catch (SocketTimeoutException e){
-                        ++count;
-                    }
+
+                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
+                    socket.send(ack);
                 }
                 DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
                 socket.send(ack);
-                if (count>0) {
-                    System.out.println(count + "packets lost.");
-                }
+
                 /*
                 whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
