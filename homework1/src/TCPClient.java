@@ -290,6 +290,7 @@ public class TCPClient {
                     }
 
                 }
+                out.writeBoolean(true);
                 System.out.println("elapsed time for " + numberOfMessages + " messages that are " + messageSize + "bytes long: " + elapsedTime);
 
             } catch(IOException e) {

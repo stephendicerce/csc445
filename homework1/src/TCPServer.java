@@ -210,6 +210,7 @@ public class TCPServer {
                     }
 
                 }
+                out.writeBoolean(true);
                 System.out.println("finished receiving messages for " + i +".");
                 int start = 0;
                 int end = 0;
