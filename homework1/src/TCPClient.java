@@ -202,7 +202,7 @@ public class TCPClient {
                         double elapsedTime = (endTime - startTime) / 1000000000.0;
                         double throughput = bytesTransferred / elapsedTime;
 
-                        System.out.println("Throughput: " + throughput + ".");
+                        System.out.println("Throughput: " + throughput);
                         //Thread.currentThread().sleep(1000);
                         //out.writeBoolean(true); //acknowledgement byte
                        // System.out.println("Sent ack");
@@ -211,7 +211,7 @@ public class TCPClient {
                     }
                 }
 
-                System.out.println("Finished " + i + ".");
+                //System.out.println("Finished " + i + ".");
                 Thread.currentThread().sleep(1000);
             }
         } catch(IOException e) {

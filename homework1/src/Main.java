@@ -72,7 +72,7 @@ public class Main {
                             client.measureTransferRates(1000, 16000, 64000, 256000, 1000000);
                         else
                             System.out.println("Since the socket couldn't be opened, the program will now exit.");
-                    } else if (type.equalsIgnoreCase("c")) {
+                    } else if (type.equalsIgnoreCase("s")) {
                         systemSet = true;
                         System.out.println("Please enter which port number the server should operate on.");
                         port = kb.nextInt();
