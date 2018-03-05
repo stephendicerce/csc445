@@ -105,11 +105,12 @@ public class UDPServer {
                     address = receivedPacket.getAddress();
                     sendToPort = receivedPacket.getPort();
 
-                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
-                    socket.send(ack);
+
                 }
+                DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
+                socket.receive(ack);
 
-
+                /*
                 whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
                     System.out.println("sending message " + j);
@@ -120,6 +121,7 @@ public class UDPServer {
                     DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
                     socket.receive(ack);
                 }
+                 **/
 
 
 

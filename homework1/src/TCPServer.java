@@ -203,7 +203,7 @@ public class TCPServer {
                         //System.out.println("sent " + messageStart + " - " + messageEnd);
                         messageStart = messageEnd;
                         System.out.println(count + " messages received from client.");
-                        out.writeBoolean(true);
+                        //out.writeBoolean(true);
                     } else {
                         System.out.println("...........");
                     }
@@ -214,7 +214,7 @@ public class TCPServer {
                 }
                 out.writeBoolean(true);
                 //System.out.println("finished receiving messages for " + i +".");
-                int start = 0;
+               /*int start = 0;
                 int end = 0;
                 long startTime = System.nanoTime();
                 long elapsedTime = 0;
@@ -225,6 +225,7 @@ public class TCPServer {
 
                     in.readBoolean();
                 }
+                **/
 
             } catch(IOException e) {
                 System.out.println("IO Exception has occurred.");

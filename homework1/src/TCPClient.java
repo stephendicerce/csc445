@@ -53,8 +53,8 @@ public class TCPClient {
 
 
         try {
-            out.writeBoolean(true);
             startTime = System.nanoTime();
+            out.writeBoolean(true);
             Random r = new Random();
             int size;
 
@@ -90,12 +90,13 @@ public class TCPClient {
                         sendingArray[i + 1] = 1;
                 }
                 sendingArray[sendingArray.length-1] = 1;
+                startTime = System.nanoTime();
                 if(k==0) {
                     out.write(sendingArray, 0, 64);
                 } else {
                     out.write(sendingArray,0, 1024);
                 }
-                startTime = System.nanoTime();
+
 
 
                 while (receivedArray[receivedArray.length-1] == 0) {
@@ -171,9 +172,9 @@ public class TCPClient {
                         bytes[j] = 1;
                     }
                 }
+                startTime = System.nanoTime();
                 out.write(bytes, 0, bytes.length);
                 //System.out.println(bytes.length + "written to server.");
-                startTime = System.nanoTime();
                 //System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
                 int remainingBytesToTransfer = bytes.length;
                 int totalAmountPossibleToReceive;
@@ -265,14 +266,15 @@ public class TCPClient {
                     out.write(bytes, messageStart, messageSize);
                     messageStart = messageEnd;
                     //System.out.println("before boolean");
-                    in.readBoolean();
+
                    // System.out.println(k);
                 }
-
+                in.readBoolean();
+                elapsedTime = System.nanoTime()-startTime;
                 //System.out.println("Finished sending messages for " + i + ".");
-                boolean finished = false;
+                //boolean finished = false;
 
-                messageStart = 0;
+                /*messageStart = 0;
                 messageEnd = 0;
                 int count = 0;
                 byte[] receivedBytes = new byte[bytes.length];
@@ -287,11 +289,12 @@ public class TCPClient {
                     }
                     if(count>=numberOfMessages) {
                         finished = true;
-                        elapsedTime = System.nanoTime()-startTime;
+
                     }
 
                 }
                 out.writeBoolean(true);
+                 **/
                 System.out.println("elapsed time for " + numberOfMessages + " messages that are " + messageSize + "bytes long: " + elapsedTime);
 
             } catch(IOException e) {

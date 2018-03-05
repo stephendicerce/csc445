@@ -59,8 +59,8 @@ public class UDPClient {
                 byteArray[byteArray.length - 1] = 1;
 
                 DatagramPacket sendPacket = new DatagramPacket(byteArray, byteArray.length, address, port);
-                socket.send(sendPacket);
                 startTime = System.nanoTime();
+                socket.send(sendPacket);
                 DatagramPacket receivePacket = new DatagramPacket(receivedBytes,receivedBytes.length);
                 socket.receive(receivePacket);
                 elapsedTime = System.nanoTime()-startTime;
@@ -125,11 +125,13 @@ public class UDPClient {
                     socket.send(packet);
                     whereToStart += messageSize;
 
-                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
-                    socket.receive(ack);
+
                 }
 
-                whereToStart = 0;
+                DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
+                socket.receive(ack);
+
+                /*whereToStart = 0;
                 for (int j=0; j<numberOfMessages; ++j) {
                     DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
                     socket.receive(receivedPacket);
@@ -138,6 +140,7 @@ public class UDPClient {
                     DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, port);
                     socket.send(ack);
                 }
+                 */
                 long elapsedTime = System.nanoTime()-startTime;
                 System.out.println("elapsed time for " + numberOfMessages + " messages that are " + messageSize + "bytes long: " + elapsedTime);
             }
