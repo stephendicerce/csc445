@@ -268,6 +268,7 @@ public class TCPClient {
                     in.readBoolean();
                 }
 
+                System.out.println("Finished sending messages for " + i + ".");
                 boolean finished = false;
 
                 messageStart = 0;

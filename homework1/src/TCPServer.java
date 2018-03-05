@@ -200,7 +200,7 @@ public class TCPServer {
                     messageEnd = messageStart + messageSize;
                     if(in.read(bytes, messageStart, messageEnd) != -1) {
                         ++count;
-                        System.out.println(count + " message received from client.");
+                        System.out.println(count + " messages received from client.");
                         out.writeBoolean(true);
                     } else {
                         System.out.println("...........");
@@ -210,7 +210,7 @@ public class TCPServer {
                     }
 
                 }
-
+                System.out.println("finished receiving messages for " + i +".");
                 int start = 0;
                 int end = 0;
                 long startTime = System.nanoTime();
