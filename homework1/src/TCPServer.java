@@ -202,7 +202,7 @@ public class TCPServer {
                         ++count;
                         System.out.println("sent " + messageStart + " - " + messageEnd);
                         messageStart = messageEnd;
-                        //System.out.println(count + " messages received from client.");
+                        System.out.println(count + " messages received from client.");
                         out.writeBoolean(true);
                     } else {
                         System.out.println("...........");
