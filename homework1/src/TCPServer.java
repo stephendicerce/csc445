@@ -121,16 +121,17 @@ public class TCPServer {
                     System.out.println("receiving " + bytes.length + " bytes..");
 
 
-                System.out.println("defining variables");
+                //System.out.println("defining variables");
                 int bytesSent = 0;
                 int amountOfBytesLeftToSend = bytes.length;
                 int totalAmountPossibleToSend = socket.getSendBufferSize();
+                System.out.println("Total amount of bytes that can be sent: " + totalAmountPossibleToSend);
                 int amountOfBytesToSend;
                 boolean finished = false;
-                System.out.println("done defining variables");
+                //System.out.println("done defining variables");
 
                 while(!finished) {
-                    System.out.println("in while loop");
+                    //System.out.println("in while loop");
                     if(amountOfBytesLeftToSend-totalAmountPossibleToSend<0) {
                         amountOfBytesToSend = amountOfBytesLeftToSend;
 
@@ -139,7 +140,7 @@ public class TCPServer {
                         amountOfBytesToSend = totalAmountPossibleToSend;
                         amountOfBytesLeftToSend -= totalAmountPossibleToSend;
                     }
-                    System.out.println("about to write");
+                    //System.out.println("about to write");
 
                     out.write(bytes, bytesSent, amountOfBytesToSend);
                     bytesSent = amountOfBytesToSend;
