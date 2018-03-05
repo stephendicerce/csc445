@@ -124,7 +124,7 @@ public class UDPClient {
                     DatagramPacket packet = new DatagramPacket(bytes, whereToStart, messageSize, address, port);
                     socket.send(packet);
                     whereToStart += messageSize;
-                    System.out.println(j);
+                    //System.out.println(j);
 
                     DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
                     socket.receive(ack);
