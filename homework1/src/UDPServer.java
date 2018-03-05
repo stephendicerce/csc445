@@ -17,6 +17,7 @@ public class UDPServer {
     public boolean openSocket() {
         try {
             socket = new DatagramSocket(port);
+            socket.setSoTimeout(3000);
             return true;
         } catch(IOException e) {
             return false;
@@ -101,7 +102,7 @@ public class UDPServer {
                 int sendToPort = 0;
                 int whereToStart = 0;
                 for (int j = 0; j < numberOfMessages; ++j) {
-                    socket.setSoTimeout(3000);
+
                     try {
                         DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
                         socket.receive(receivedPacket);
