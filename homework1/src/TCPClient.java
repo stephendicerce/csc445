@@ -278,7 +278,7 @@ public class TCPClient {
                 byte[] receivedBytes = new byte[bytes.length];
                 while(!finished) {
                     messageEnd = messageStart + messageSize;
-                    if(in.read(receivedBytes, messageStart, messageEnd) != -1) {
+                    if(in.read(receivedBytes, messageStart, messageSize) != -1) {
                         ++count;
                         System.out.println(count + " messages received.");
                         out.writeBoolean(true);

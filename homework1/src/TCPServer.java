@@ -200,7 +200,7 @@ public class TCPServer {
                     messageEnd = messageStart + messageSize;
                     if(in.read(bytes, messageStart, messageSize) != -1) {
                         ++count;
-                        System.out.println("sent " + messageStart + " - " + messageEnd);
+                        //System.out.println("sent " + messageStart + " - " + messageEnd);
                         messageStart = messageEnd;
                         System.out.println(count + " messages received from client.");
                         out.writeBoolean(true);
@@ -220,8 +220,8 @@ public class TCPServer {
                 long elapsedTime = 0;
                 for(int j=0; j<numberOfMessages; ++j) {
                     end = start + messageSize;
-                    out.write(bytes, start, end);
-                    start = messageEnd + 1;
+                    out.write(bytes, start, messageSize);
+                    start = end;
 
                     in.readBoolean();
                 }
