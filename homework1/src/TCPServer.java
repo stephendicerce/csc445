@@ -168,6 +168,65 @@ public class TCPServer {
         }
     }
 
+    public void interactionForMByte(int firstSize, int firstNumber, int secondSize, int secondNumber, int thirdSize, int thirdNumber){
+        byte[] bytes = new byte[1000000];
+        int messageSize;
+        int numberOfMessages;
+        DataInputStream in;
+        DataOutputStream out;
 
+        for(int i=0; i<3; ++i) {
+            switch(i) {
+                case 0: messageSize = firstSize;
+                    numberOfMessages = firstNumber;
+                    break;
+                case 1: messageSize = secondSize;
+                    numberOfMessages = secondNumber;
+                    break;
+                default:messageSize = thirdSize;
+                    numberOfMessages = thirdNumber;
+            }
+
+            try {
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+
+                boolean finished = false;
+                int messageStart = 0;
+                int messageEnd = 0;
+                int count = 0;
+
+                while(!finished) {
+                    messageEnd = messageStart + messageSize;
+                    if(in.read(bytes, messageStart, messageEnd) != -1) {
+                        ++count;
+                        System.out.println(count + " message received from client.");
+                        out.writeBoolean(true);
+                    } else {
+                        System.out.println("...........");
+                    }
+                    if(count>=numberOfMessages) {
+                        finished = true;
+                    }
+
+                }
+
+                int start = 0;
+                int end = 0;
+                long startTime = System.nanoTime();
+                long elapsedTime = 0;
+                for(int j=0; j<numberOfMessages; ++j) {
+                    end = start + messageSize;
+                    out.write(bytes, start, end);
+                    start = messageEnd + 1;
+
+                    in.readBoolean();
+                }
+
+            } catch(IOException e) {
+                System.out.println("IO Exception has occurred.");
+            }
+        }
+    }
 
 }

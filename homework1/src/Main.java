@@ -20,7 +20,7 @@ public class Main {
         if(communicationType.equalsIgnoreCase("t")) {
             String tcpType;
             do {
-                System.out.println("Do you want to measure throughput (t) or simple echo (e)?");
+                System.out.println("Do you want to check the interaction between 1MB of data sent with different message sizes(i), measure throughput (t) or simple echo (e)?");
                 tcpType = kb.nextLine();
                 if (tcpType.equalsIgnoreCase("e")) {
                     tcpTypeBoolean = true;
@@ -85,7 +85,37 @@ public class Main {
                     } else {
                         System.out.println("You didn't enter client or server. Please try again.");
                     }
-                } while (!systemSet);
+                } else if(tcpType.equalsIgnoreCase("i")) {
+                    tcpTypeBoolean = true;
+                    System.out.println("Enter whether this computer is a server or a client.(Start the server first)");
+                    type = kb.nextLine();
+
+                    if (type.equalsIgnoreCase("c")) {
+                        systemSet = true;
+                        System.out.println("Please enter the hostname of the server you wish to connect to.");
+                        hostname = kb.nextLine();
+                        System.out.println("Enter the port number to operate on.");
+                        port = kb.nextInt();
+                        kb.nextLine();
+                        client = new TCPClient(hostname, port);
+                        if (client.openSocket())
+                            client.interactionForMByte(256,4000, 512, 2000, 1024, 1000);
+                        else
+                            System.out.println("Since the socket couldn't be opened, the program will now exit.");
+                    } else if (type.equalsIgnoreCase("s")) {
+                        systemSet = true;
+                        System.out.println("Please enter which port number the server should operate on.");
+                        port = kb.nextInt();
+                        kb.nextLine();
+                        server = new TCPServer(port);
+                        if (server.openSockets())
+                            server.interactionForMByte(256, 4000, 512, 2000, 1024, 1000);
+                        else
+                            System.out.println("Since the server couldn't be started, the program will now exit.");
+                    } else {
+                        System.out.println("You didn't enter client or server. Please try again.");
+                    }
+                }
 
             } while(!tcpTypeBoolean);
 

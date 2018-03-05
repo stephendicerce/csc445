@@ -224,6 +224,79 @@ public class TCPClient {
 
     }
 
+
+    public void interactionForMByte(int firstSize, int firstNumber, int secondSize, int secondNumber, int thirdSize, int thirdNumber){
+        byte[] bytes = new byte[1000000];
+        int messageSize;
+        int numberOfMessages;
+
+        for(int i=0; i<3; ++i) {
+            switch(i) {
+                case 0: messageSize = firstSize;
+                    numberOfMessages = firstNumber;
+                    break;
+                case 1: messageSize = secondSize;
+                    numberOfMessages = secondNumber;
+                    break;
+                default:messageSize = thirdSize;
+                    numberOfMessages = thirdNumber;
+            }
+
+            try {
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+
+                for(int j=0; j<bytes.length; ++j) {
+                    Random r = new Random();
+                    int randomInt = r.nextInt(1);
+                    if(randomInt==0) {
+                        bytes[j] = 0;
+                    } else {
+                        bytes[j] = 1;
+                    }
+                }
+
+                int messageStart = 0;
+                int messageEnd = 0;
+                long startTime = System.nanoTime();
+                long elapsedTime = 0;
+                for(int k=0; k<numberOfMessages; ++k) {
+                    messageEnd = messageStart + messageSize;
+                    out.write(bytes, messageStart, messageEnd);
+                    messageStart = messageEnd + 1;
+
+                    in.readBoolean();
+                }
+
+                boolean finished = false;
+
+                messageStart = 0;
+                messageEnd = 0;
+                int count = 0;
+                byte[] receivedBytes = new byte[bytes.length];
+                while(!finished) {
+                    messageEnd = messageStart + messageSize;
+                    if(in.read(receivedBytes, messageStart, messageEnd) != -1) {
+                        ++count;
+                        System.out.println(count + " messages received.");
+                        out.writeBoolean(true);
+                    } else {
+                        System.out.println("...........");
+                    }
+                    if(count>=numberOfMessages) {
+                        finished = true;
+                        elapsedTime = System.nanoTime()-startTime;
+                    }
+
+                }
+                System.out.println("elapsed time for " + numberOfMessages + " messages that are " + messageSize + "bytes long: " + elapsedTime);
+
+            } catch(IOException e) {
+                System.out.println("IO Exception has occurred.");
+            }
+        }
+    }
+
     public boolean close() {
         if(in != null && out != null) {
             try {
