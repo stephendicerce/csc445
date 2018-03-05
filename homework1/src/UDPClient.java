@@ -110,7 +110,7 @@ public class UDPClient {
                     int randomInt = random.nextInt(1);
                     if (randomInt == 0)
                         bytes[j] = 0;
-                    if (randomInt == 1)
+                    else if (randomInt == 1)
                         bytes[j] = 1;
                     else {
                         System.out.println("what happened");
