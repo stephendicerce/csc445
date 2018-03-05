@@ -264,8 +264,9 @@ public class TCPClient {
                     messageEnd = messageStart + messageSize;
                     out.write(bytes, messageStart, messageEnd);
                     messageStart = messageEnd + 1;
-
+                    System.out.println("before boolean");
                     in.readBoolean();
+                    System.out.println("after boolean");
                 }
 
                 System.out.println("Finished sending messages for " + i + ".");
