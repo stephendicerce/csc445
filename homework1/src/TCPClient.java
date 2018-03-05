@@ -266,7 +266,7 @@ public class TCPClient {
                     messageStart = messageEnd;
                     //System.out.println("before boolean");
                     in.readBoolean();
-                    System.out.println(k);
+                   // System.out.println(k);
                 }
 
                 //System.out.println("Finished sending messages for " + i + ".");
