@@ -176,7 +176,12 @@ public class TCPClient {
                 startTime = System.nanoTime();
                 //System.out.println("sending time for packet " + count + " for " + i + ": " + startTime + ".");
                 int remainingBytesToTransfer = bytes.length;
-                int totalAmountPossibleToReceive = socket.getReceiveBufferSize();
+                int totalAmountPossibleToReceive;
+                if(i==4) {
+                     totalAmountPossibleToReceive = 91392;
+                } else {
+                     totalAmountPossibleToReceive = 43520;
+                }
                 //System.out.println("Amount of bytes that can be transferred: " + totalAmountPossibleToReceive);
                 int bytesReceived = 0;
                 boolean finished = false;
