@@ -20,9 +20,9 @@ public class Main {
         if(communicationType.equalsIgnoreCase("tcp")) {
             String tcpType;
             do {
-                System.out.println("Do you want to measure throughput or simple echo?");
+                System.out.println("Do you want to measure throughput (t) or simple echo (e)?");
                 tcpType = kb.nextLine();
-                if (tcpType.equalsIgnoreCase("simple echo")) {
+                if (tcpType.equalsIgnoreCase("e")) {
                     tcpTypeBoolean = true;
                     do {
                         System.out.println("Enter whether this computer is a server or a client.(Start the server first)");
@@ -55,7 +55,7 @@ public class Main {
                         }
                     } while (!systemSet);
 
-                } else if (tcpType.equalsIgnoreCase("measure throughput")) {
+                } else if (tcpType.equalsIgnoreCase("t")) {
                     tcpTypeBoolean = true;
                     System.out.println("Enter whether this computer is a server or a client.(Start the server first)");
                     type = kb.nextLine();

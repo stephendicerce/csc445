@@ -205,6 +205,7 @@ public class TCPClient {
                     }
                 }
 
+                System.out.println("Finished " + i + ".");
                 Thread.currentThread().sleep(1000);
             }
         } catch(IOException e) {

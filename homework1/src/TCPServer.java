@@ -148,6 +148,7 @@ public class TCPServer {
                     in.readBoolean();
                     System.out.println("received ack");
                 }
+                System.out.println("Finished " + i + ".");
             }
         } catch(IOException e) {
             System.out.println("IO Exception has occurred.");
