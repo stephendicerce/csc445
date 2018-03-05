@@ -142,23 +142,23 @@ public class TCPClient {
                 switch (i) {
                     case 0: bytes = new byte[firstSize];
                         receivedBytes = new byte[firstSize];
-                        System.out.println("working on " + firstSize + "bytes.");
+                        //System.out.println("working on " + firstSize + "bytes.");
                         break;
                     case 1: bytes = new byte[secondSize];
                         receivedBytes = new byte[secondSize];
-                        System.out.println("working on " + secondSize + "bytes.");
+                        //System.out.println("working on " + secondSize + "bytes.");
                         break;
                     case 2: bytes = new byte[thirdSize];
                         receivedBytes = new byte[thirdSize];
-                        System.out.println("working on " + thirdSize + "bytes.");
+                        //System.out.println("working on " + thirdSize + "bytes.");
                         break;
                     case 3: bytes = new byte[fourthSize];
                         receivedBytes = new byte[fourthSize];
-                        System.out.println("working on " + fourthSize + "bytes.");
+                        //System.out.println("working on " + fourthSize + "bytes.");
                         break;
                     default: bytes = new byte[fifthSize];
                         receivedBytes = new byte[fifthSize];
-                        System.out.println("working on " + fifthSize + "bytes.");
+                        //System.out.println("working on " + fifthSize + "bytes.");
                         break;
                 }
 
