@@ -269,7 +269,7 @@ public class TCPClient {
                     System.out.println(k);
                 }
 
-                System.out.println("Finished sending messages for " + i + ".");
+                //System.out.println("Finished sending messages for " + i + ".");
                 boolean finished = false;
 
                 messageStart = 0;
@@ -280,7 +280,7 @@ public class TCPClient {
                     messageEnd = messageStart + messageSize;
                     if(in.read(receivedBytes, messageStart, messageSize) != -1) {
                         ++count;
-                        System.out.println(count + " messages received.");
+                        //System.out.println(count + " messages received.");
                         out.writeBoolean(true);
                     } else {
                         System.out.println("...........");
