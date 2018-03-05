@@ -169,7 +169,7 @@ public class TCPServer {
     }
 
     public void interactionForMByte(int firstSize, int firstNumber, int secondSize, int secondNumber, int thirdSize, int thirdNumber){
-        byte[] bytes = new byte[1000000];
+        byte[] bytes = new byte[1024000];
         int messageSize;
         int numberOfMessages;
         DataInputStream in;
