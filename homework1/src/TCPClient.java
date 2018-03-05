@@ -198,9 +198,9 @@ public class TCPClient {
                         double throughput = bytesTransferred / elapsedTime;
 
                         System.out.println("Throughput: " + throughput + ".");
-                        Thread.currentThread().sleep(1000);
-                        out.writeBoolean(true); //acknowledgement byte
-                        System.out.println("Sent ack");
+                        //Thread.currentThread().sleep(1000);
+                        //out.writeBoolean(true); //acknowledgement byte
+                       // System.out.println("Sent ack");
                     } else {
                         System.out.println("spinning...");
                     }

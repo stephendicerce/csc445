@@ -146,8 +146,8 @@ public class TCPServer {
                     bytesSent = amountOfBytesToSend;
                     System.out.println("Sent back " + bytesSent + " to the client.");
 
-                    in.readBoolean();
-                    System.out.println("received ack");
+                    //in.readBoolean();
+                    //System.out.println("received ack");
                 }
                 System.out.println("Finished " + i + ".");
             }
