@@ -197,11 +197,8 @@ public class TCPServer {
                 int count = 0;
 
                 while(!finished) {
-                    if(messageStart + messageSize>bytes.length)
-                        messageEnd = bytes.length;
-                    else
-                        messageEnd = messageStart + messageSize;
-                    if(in.read(bytes, messageStart, messageEnd) != -1) {
+                    messageEnd = messageStart + messageSize;
+                    if(in.read(bytes, messageStart, messageSize) != -1) {
                         ++count;
                         System.out.println("sent " + messageStart + " - " + messageEnd);
                         messageStart = messageEnd;
