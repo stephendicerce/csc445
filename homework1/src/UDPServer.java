@@ -71,4 +71,61 @@ public class UDPServer {
         }
         socket.close();
     }
+
+    public void interactionForMBye(int firstSize, int firstNumber, int secondSize, int secondNumber, int thirdSize, int thirdNumber) {
+        int messageSize;
+        int numberOfMessages;
+        byte[] bytes = new byte[1024000];
+        byte[] receivedBytes = new byte[1024000];
+        byte[] ackByte = new byte[1];
+        running = true;
+
+        try {
+            for (int i = 0; i < 3; ++i) {
+                switch (i) {
+                    case 0:
+                        messageSize = firstSize;
+                        numberOfMessages = firstNumber;
+                        break;
+                    case 1:
+                        messageSize = secondSize;
+                        numberOfMessages = secondNumber;
+                        break;
+                    default:
+                        messageSize = thirdSize;
+                        numberOfMessages = thirdNumber;
+                }
+                InetAddress address = null;
+                int sendToPort = 0;
+                int whereToStart = 0;
+                for (int j = 0; j < numberOfMessages; ++j) {
+                    DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, whereToStart, messageSize);
+                    socket.receive(receivedPacket);
+                    whereToStart += messageSize;
+                    address = receivedPacket.getAddress();
+                    sendToPort = receivedPacket.getPort();
+
+                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
+                    socket.send(ack);
+                }
+
+
+                whereToStart = 0;
+                for (int j = 0; j < numberOfMessages; ++j) {
+                    System.out.println("sending message " + j);
+                    DatagramPacket packet = new DatagramPacket(bytes, whereToStart, messageSize, address, sendToPort);
+                    socket.send(packet);
+                    whereToStart += messageSize;
+
+                    DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
+                    socket.receive(ack);
+                }
+
+
+
+            }
+        } catch(IOException e) {
+            System.out.println("IO Exception occurred.");
+        }
+    }
 }
