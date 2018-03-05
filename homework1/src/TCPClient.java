@@ -265,7 +265,7 @@ public class TCPClient {
                         messageEnd = bytes.length;
                     else
                         messageEnd = messageStart + messageSize;
-                    out.write(bytes, messageStart, messageEnd);
+                    out.write(bytes, messageStart, messageSize);
                     messageStart = messageEnd;
                     //System.out.println("before boolean");
                     in.readBoolean();
