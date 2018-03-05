@@ -99,7 +99,7 @@ public class Main {
                         kb.nextLine();
                         client = new TCPClient(hostname, port);
                         if (client.openSocket())
-                            client.interactionForMByte(256,4000, 512, 2000, 1024, 1000);
+                            client.interactionForMByte(4000,256, 2000, 512, 1000, 1024);
                         else
                             System.out.println("Since the socket couldn't be opened, the program will now exit.");
                     } else if (type.equalsIgnoreCase("s")) {
@@ -109,7 +109,7 @@ public class Main {
                         kb.nextLine();
                         server = new TCPServer(port);
                         if (server.openSockets())
-                            server.interactionForMByte(256, 4000, 512, 2000, 1024, 1000);
+                            server.interactionForMByte(4000, 256, 2000, 512, 1000, 1024);
                         else
                             System.out.println("Since the server couldn't be started, the program will now exit.");
                     } else {
