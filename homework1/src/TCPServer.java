@@ -200,6 +200,7 @@ public class TCPServer {
                     messageEnd = messageStart + messageSize;
                     if(in.read(bytes, messageStart, messageEnd) != -1) {
                         ++count;
+                        messageStart = messageEnd + 1;
                         System.out.println(count + " messages received from client.");
                         out.writeBoolean(true);
                     } else {
