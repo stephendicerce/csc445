@@ -107,8 +107,8 @@ public class UDPServer {
 
 
                 }
-                DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length);
-                socket.receive(ack);
+                DatagramPacket ack = new DatagramPacket(ackByte, ackByte.length, address, sendToPort);
+                socket.send(ack);
 
                 /*
                 whereToStart = 0;
