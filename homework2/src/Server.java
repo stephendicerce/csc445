@@ -95,6 +95,25 @@ public class Server {
     }
 
     /**
+     * Unused Method at the moment
+     * @param sendingPacket the DatagramPacket that the server is sending to the client
+     * @param responsePacket 
+     * @return
+     */
+    public DatagramPacket sendAndReceivePackets(DatagramPacket sendingPacket, DatagramPacket responsePacket) {
+        try {
+            socket.send(sendingPacket);
+            socket.receive(responsePacket);
+
+        } catch(IOException e) {
+            System.out.println("IO Exception occuring while transferring packets between the client and server");
+        }
+
+
+        return responsePacket;
+    }
+
+    /**
      * Method to get page data based on the url given by the user
      * @param url the url the method will get information for
      * @return A string containing all of the page's data
