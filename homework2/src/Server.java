@@ -37,13 +37,12 @@ public class Server {
      *
      */
     public void listen() {
+        int port;
         byte[] bytesToSend;
-        byte[] lastBytesSent;
-        byte[] urlbytes = new byte[1024];
-        int packetNumber = 0;
+        byte[] urlBytes = new byte[1024];
+        int packetNumber;
         byte[] acknowledgementFromClient = new byte[1024];
         URL url;
-        boolean running = true;
         boolean clientReceivedNumberOfImages = false;
         DatagramPacket urlPacket;
         DatagramPacket dataPacket;
@@ -57,11 +56,16 @@ public class Server {
         String numberOfImagesString;
         byte[] numberOfImagesBytes;
 
-        while(running) {
-            urlPacket = new DatagramPacket(urlbytes, urlbytes.length);
+        while(true) {
+            System.out.println("Waiting for new URL.");
+            urlPacket = new DatagramPacket(urlBytes, urlBytes.length);
+            port = 0;
             try {
                 socket.receive(urlPacket);
-                urlString = new String(urlbytes);
+                address = urlPacket.getAddress();
+                port = urlPacket.getPort();
+
+                urlString = new String(urlBytes);
                 url = new URL(urlString);
                 pageData = getData(url);
             } catch(IOException e) {
@@ -71,7 +75,7 @@ public class Server {
                 bytesToSend = pageData.getBytes();
                 int offset = 0;
                 for (int i = 0, numberOfPackets = bytesToSend.length / 512; i < numberOfPackets; ++i) {
-                    dataPacket = new DatagramPacket(bytesToSend, offset, 512);
+                    dataPacket = new DatagramPacket(bytesToSend, offset, 512, address, port);
                     acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
                     try {
                         socket.send(dataPacket);
@@ -100,7 +104,7 @@ public class Server {
 
                 //sending the client the number of images to expect
                 while (!clientReceivedNumberOfImages) {
-                    dataPacket = new DatagramPacket(numberOfImagesBytes, numberOfImagesBytes.length);
+                    dataPacket = new DatagramPacket(numberOfImagesBytes, numberOfImagesBytes.length, address, port);
                     acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
                     try {
                         socket.send(dataPacket);
@@ -125,7 +129,7 @@ public class Server {
 
                         if (imageBytes != null) {
                             for (int j = 0, numberOfPackets = imageBytes.length / 512; j < numberOfPackets; ++j) {
-                                DatagramPacket imagePacket = new DatagramPacket(bytesToSend, offset, 512);
+                                DatagramPacket imagePacket = new DatagramPacket(bytesToSend, offset, 512, address, port);
                                 acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
                                 try {
                                     socket.send(imagePacket);
@@ -161,29 +165,10 @@ public class Server {
     }
 
     /**
-     * Unused Method at the moment
-     * @param sendingPacket the DatagramPacket that the server is sending to the client
-     * @param responsePacket 
-     * @return
-     */
-    public DatagramPacket sendAndReceivePackets(DatagramPacket sendingPacket, DatagramPacket responsePacket) {
-        try {
-            socket.send(sendingPacket);
-            socket.receive(responsePacket);
-
-        } catch(IOException e) {
-            System.out.println("IO Exception occuring while transferring packets between the client and server");
-        }
-
-
-        return responsePacket;
-    }
-
-    /**
      * Method to get page data based on the url given by the user
      * @param url the url the method will get information for
      * @return A string containing all of the page's data
-     * @throws IOException
+     * @throws IOException for HttpURLConnection
      */
     private String getData(URL url) throws IOException{
         String pageData = "";
@@ -238,7 +223,7 @@ public class Server {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[1024];
 
-            int n =0;
+            int n;
 
             while(-1!=(n=in.read(buf))) {
                 out.write(buf,0,n);
