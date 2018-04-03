@@ -50,9 +50,9 @@ public class Client {
         boolean recievedImage = false;
         byte[] receiveByte = new byte[512]; //byte array for the incoming packets
         byte[] urlBytes = url.getBytes(); //the user requested url translated into a byte array for transfer.
-        byte[] acknowledgementBytes = new byte[1]; //a byte array containing bytes representing the last packet received by the client
-        byte packetNumber = 0;
-        acknowledgementBytes[0] = packetNumber;
+        byte[] acknowledgementBytes = new byte[512]; //a byte array containing bytes representing the last packet received by the client
+        int packetNumber = 0;
+        String packetNumberString;
         DatagramPacket urlPacket;
         DatagramPacket receivePacket;
         DatagramPacket acknowledgementPacket;
@@ -86,14 +86,16 @@ public class Client {
                 receivePacket = new DatagramPacket(receiveByte, receiveByte.length);
                 socket.receive(receivePacket);
                 outputStream.write(receivePacket.getData());
-                acknowledgementBytes[0] = 0;
+                packetNumberString = Integer.toString(packetNumber);
+                acknowledgementBytes = packetNumberString.getBytes();
                 acknowledgementPacket = new DatagramPacket(acknowledgementBytes, acknowledgementBytes.length);
                 socket.send(acknowledgementPacket);
-                ++acknowledgementBytes[0];
+                ++packetNumber;
                 if (receivePacket.getLength() < 512)
                     received = true;
             } catch(SocketTimeoutException e) {
                 System.out.println("Client timeout: Asking server for resend");
+                --packetNumber;
                 try {
                     acknowledgementPacket = new DatagramPacket(acknowledgementBytes, acknowledgementBytes.length);
                     socket.send(acknowledgementPacket);
