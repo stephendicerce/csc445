@@ -44,13 +44,18 @@ public class Server {
         byte[] acknowledgementFromClient = new byte[1024];
         URL url;
         boolean running = true;
+        boolean clientReceivedNumberOfImages = false;
         DatagramPacket urlPacket;
         DatagramPacket dataPacket;
         DatagramPacket acknowledgementPacket;
-        String urlString;
-        String pageData;
+        String urlString = null;
+        String pageData = null;
         String packetNumberString;
         String[] imageURLs;
+        int numberOfImages;
+        int clientNumberOfImages;
+        String numberOfImagesString;
+        byte[] numberOfImagesBytes;
 
         while(running) {
             urlPacket = new DatagramPacket(urlbytes, urlbytes.length);
@@ -59,39 +64,100 @@ public class Server {
                 urlString = new String(urlbytes);
                 url = new URL(urlString);
                 pageData = getData(url);
-
+            } catch(IOException e) {
+                System.out.println("IO Exception occurred during the reception of the URL.");
+            }
+            if(pageData != null) {
                 bytesToSend = pageData.getBytes();
                 int offset = 0;
-                for(int i=0, numberOfPackets=bytesToSend.length/512; i<numberOfPackets; ++i) {
+                for (int i = 0, numberOfPackets = bytesToSend.length / 512; i < numberOfPackets; ++i) {
                     dataPacket = new DatagramPacket(bytesToSend, offset, 512);
                     acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
-                    socket.send(dataPacket);
-                    socket.receive(acknowledgementPacket);
-                    packetNumberString = new String(acknowledgementPacket.getData());
-                    packetNumber = Integer.parseInt(packetNumberString);
-                    if (packetNumber == i-1){ //if the client is requesting the previous packet, resend the last packet
-                        i-= 1;
-                    } else if(packetNumber == i){
-                        offset += 512;
-                    } else {
-                        System.out.println("Something weird is happening");
+                    try {
+                        socket.send(dataPacket);
+                        socket.receive(acknowledgementPacket);
+                        packetNumberString = new String(acknowledgementPacket.getData());
+                        packetNumber = Integer.parseInt(packetNumberString);
+                        if (packetNumber == i - 1) { //if the client is requesting the previous packet, resend the last packet
+                            i -= 1;
+                        } else if (packetNumber == i) {
+                            offset += 512;
+                        } else {
+                            System.out.println("Something weird is happening");
+                        }
+                    } catch(SocketTimeoutException e) {
+                        i-=1;
+                    } catch (IOException e) {
+                        System.out.println("IO Exception occurred during data transmission.");
                     }
                 }
 
+                //looks for image urls within the page data
                 imageURLs = parseForImageURLs(pageData);
-                for(int i=0, numberOfImagesFound=imageURLs.length; i<numberOfImagesFound; ++i) {
-                    boolean receivedImage = false;
-                    while(!receivedImage) {
+                numberOfImages = imageURLs.length;
+                numberOfImagesString = Integer.toString(numberOfImages);
+                numberOfImagesBytes = numberOfImagesString.getBytes();
 
+                //sending the client the number of images to expect
+                while (!clientReceivedNumberOfImages) {
+                    dataPacket = new DatagramPacket(numberOfImagesBytes, numberOfImagesBytes.length);
+                    acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
+                    try {
+                        socket.send(dataPacket);
+                        socket.receive(acknowledgementPacket);
+
+                        clientNumberOfImages = Integer.parseInt(new String(acknowledgementPacket.getData()));
+
+                        if (clientNumberOfImages == numberOfImages) {
+                            clientReceivedNumberOfImages = true;
+                        }
+                    } catch(SocketTimeoutException e) {
+                        System.out.println("Server timed out, trying again.");
+                    } catch(IOException e) {
+                        System.out.println("IOException occurred while communicating the number of images with the client.");
                     }
                 }
 
+                //transmitting the images to the client
+                for (int i = 0, numberOfImagesFound = imageURLs.length; i < numberOfImagesFound; ++i) {
+                    try {
+                        byte[] imageBytes = getImage(new URL(imageURLs[i]));
 
-            }catch(IOException e) {
-                System.out.println("IO Exception occurred while receiving url");
+                        if (imageBytes != null) {
+                            for (int j = 0, numberOfPackets = imageBytes.length / 512; j < numberOfPackets; ++j) {
+                                DatagramPacket imagePacket = new DatagramPacket(bytesToSend, offset, 512);
+                                acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
+                                try {
+                                    socket.send(imagePacket);
+                                    socket.receive(acknowledgementPacket);
+                                    packetNumberString = new String(acknowledgementPacket.getData());
+                                    packetNumber = Integer.parseInt(packetNumberString);
+                                    if (packetNumber == j - 1) { //if the client is requesting the previous packet, resend the last packet
+                                        j -= 1;
+                                    } else if (packetNumber == j) {
+                                        offset += 512;
+                                    } else {
+                                        System.out.println("Something weird occurred");
+                                    }
+                                } catch(SocketTimeoutException e) {
+                                    System.out.println("Socket timed out. re-sending last packet.");
+                                    j-=1;
+                                } catch(IOException e) {
+                                    System.out.println("IO Exception occurred while transmitting the image: " + imageURLs[i]);
+                                }
+                            }
+                        }
+                    } catch(MalformedURLException e) {
+                        System.out.println(imageURLs[i] + "was malformed");
+                    }
+                }
+            } else {
+                if(urlString != null)
+                    System.out.println("No page Data found for " + urlString + ".");
+                else
+                    System.out.println("URL was never sent to the server.");
             }
         }
-
     }
 
     /**
