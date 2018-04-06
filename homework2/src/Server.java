@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Server {
-    DatagramSocket socket;
-    InetAddress address;
-    int port;
+    private DatagramSocket socket;
+    private InetAddress address;
+    private int port;
+    private boolean slidingWindows;
+    private boolean dropPackets;
+    private URL urlToSend;
 
-    public Server(int port) {
+    Server(int port, boolean slidingWindows, boolean dropPackets) {
         this.port = port;
+        this.slidingWindows = slidingWindows;
+        this.dropPackets = dropPackets;
     }
 
     public boolean openSocket() {
@@ -26,7 +31,7 @@ public class Server {
     }
 
     /**
-     * The driver for the server. First the server listens for a url to connect to. Once the URL is received
+     * The default driver for the server. First the server listens for a url to connect to. Once the URL is received
      * the server will call getData to connect to the url via HTTPConnection, and receive the data from the website
      * in the form of a string. Once the data string is received, it will be parsed to look for urls that are
      * images via parseForImageURLs. All image urls will be stored in an array which will in turn be queried for via
@@ -36,12 +41,12 @@ public class Server {
      * send. The server will then send each of the images to the client in the same fashion as the page data.
      *
      */
-    public void listen() {
+    private void listen() {
         int port;
         byte[] bytesToSend;
-        byte[] urlBytes = new byte[1024];
+        byte[] urlBytes = new byte[512];
         int packetNumber;
-        byte[] acknowledgementFromClient = new byte[1024];
+        byte[] acknowledgementFromClient = new byte[512];
         URL url;
         boolean clientReceivedNumberOfImages = false;
         DatagramPacket urlPacket;
@@ -94,6 +99,7 @@ public class Server {
                     } catch (IOException e) {
                         System.out.println("IO Exception occurred during data transmission.");
                     }
+
                 }
 
                 //looks for image urls within the page data
@@ -123,12 +129,12 @@ public class Server {
                 }
 
                 //transmitting the images to the client
-                for (int i = 0, numberOfImagesFound = imageURLs.length; i < numberOfImagesFound; ++i) {
+                for (String imageURL : imageURLs) {
                     try {
-                        byte[] imageBytes = getImage(new URL(imageURLs[i]));
+                        byte[] imageBytes = getImage(new URL(imageURL));
 
                         if (imageBytes != null) {
-                            for (int j = 0, numberOfPackets = imageBytes.length / 512; j < numberOfPackets; ++j) {
+                            for (int i = 0, numberOfPackets = imageBytes.length / 512; i < numberOfPackets; ++i) {
                                 DatagramPacket imagePacket = new DatagramPacket(bytesToSend, offset, 512, address, port);
                                 acknowledgementPacket = new DatagramPacket(acknowledgementFromClient, acknowledgementFromClient.length);
                                 try {
@@ -136,23 +142,23 @@ public class Server {
                                     socket.receive(acknowledgementPacket);
                                     packetNumberString = new String(acknowledgementPacket.getData());
                                     packetNumber = Integer.parseInt(packetNumberString);
-                                    if (packetNumber == j - 1) { //if the client is requesting the previous packet, resend the last packet
-                                        j -= 1;
-                                    } else if (packetNumber == j) {
+                                    if (packetNumber == i - 1) { //if the client is requesting the previous packet, resend the last packet
+                                        i -= 1;
+                                    } else if (packetNumber == i) {
                                         offset += 512;
                                     } else {
                                         System.out.println("Something weird occurred");
                                     }
-                                } catch(SocketTimeoutException e) {
+                                } catch (SocketTimeoutException e) {
                                     System.out.println("Socket timed out. re-sending last packet.");
-                                    j-=1;
-                                } catch(IOException e) {
-                                    System.out.println("IO Exception occurred while transmitting the image: " + imageURLs[i]);
+                                    i -= 1;
+                                } catch (IOException e) {
+                                    System.out.println("IO Exception occurred while transmitting the image: " + imageURL);
                                 }
                             }
                         }
-                    } catch(MalformedURLException e) {
-                        System.out.println(imageURLs[i] + "was malformed");
+                    } catch (MalformedURLException e) {
+                        System.out.println(imageURL + "was malformed");
                     }
                 }
             } else {
@@ -162,6 +168,92 @@ public class Server {
                     System.out.println("URL was never sent to the server.");
             }
         }
+    }
+
+    private void listenWithSlidingWindows() {
+        Thread webDataThread;
+        GetPageData getPageData;
+        int port;
+        byte[] bytesToSend;
+        byte[] urlBytes = new byte[512];
+        int packetNumber;
+        byte[] acknowledgementFromClient = new byte[512];
+        URL url;
+        boolean clientReceivedNumberOfImages = false;
+        DatagramPacket urlPacket;
+        DatagramPacket dataPacket;
+        DatagramPacket acknowledgementPacket;
+        String urlString = null;
+        String pageData = null;
+        String packetNumberString;
+        String[] imageURLs;
+        int numberOfImages;
+        int clientNumberOfImages;
+        String numberOfImagesString;
+        byte[] numberOfImagesBytes;
+
+        for(;;) {
+            System.out.println("Waiting for URL from user...");
+            urlPacket = new DatagramPacket(urlBytes, urlBytes.length);
+            try {
+                socket.receive(urlPacket);
+                address = urlPacket.getAddress();
+                port = urlPacket.getPort();
+
+
+                urlString = new String(urlPacket.getData());
+                url = new URL(urlString);
+                setURLToSendToThread(url);
+                getPageData = new GetPageData(this);
+                webDataThread = new Thread(getPageData);
+                webDataThread.run();
+                pageData = getPageData.getPageData();
+            } catch(IOException e) {
+                System.out.println("IO Exception has occurred while receiving url from user.");
+            }
+        }
+
+    }
+
+    private void listenAndDropPackets() {
+        int port;
+        byte[] bytesToSend;
+        byte[] urlBytes = new byte[512];
+        int packetNumber;
+        byte[] acknowledgementFromClient = new byte[512];
+        URL url;
+        boolean clientReceivedNumberOfImages = false;
+        DatagramPacket urlPacket;
+        DatagramPacket dataPacket;
+        DatagramPacket acknowledgementPacket;
+        String urlString = null;
+        String pageData = null;
+        String packetNumberString;
+        String[] imageURLs;
+        int numberOfImages;
+        int clientNumberOfImages;
+        String numberOfImagesString;
+        byte[] numberOfImagesBytes;
+
+    }
+
+    /**
+     * A method to pick which driver to use.
+     * Address Type: IPv4 vs IPv6
+     * Transfer Type: Sequential acknowledgements vs TCP-like sliding windows
+     * Quality Type: All data is successfully managed vs simulating 1% of the total packets being dropped
+     *
+     * The default driver is IPv4, with sequential acknowledgements, with no packets dropped.
+     */
+    public void pickListenType () {
+        if(slidingWindows) {
+            listenWithSlidingWindows();
+        } else if(dropPackets) {
+            listenAndDropPackets();
+        } else {
+            listen();
+        }
+
     }
 
     /**
@@ -236,5 +328,13 @@ public class Server {
             System.out.println("IO Exception getting data from URL");
             return null;
         }
+    }
+
+    private void setURLToSendToThread(URL url) {
+        urlToSend = url;
+    }
+
+    public URL getURL() {
+        return urlToSend;
     }
 }
