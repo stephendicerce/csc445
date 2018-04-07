@@ -10,6 +10,7 @@ public class Server {
     private boolean slidingWindows;
     private boolean dropPackets;
     private URL urlToSend;
+    private String pageDataString = "";
 
     Server(int port, boolean slidingWindows, boolean dropPackets) {
         this.port = port;
@@ -183,7 +184,6 @@ public class Server {
         DatagramPacket urlPacket;
         DatagramPacket dataPacket;
         DatagramPacket acknowledgementPacket;
-        String urlString = null;
         String pageData = null;
         String packetNumberString;
         String[] imageURLs;
@@ -201,13 +201,9 @@ public class Server {
                 port = urlPacket.getPort();
 
 
-                urlString = new String(urlPacket.getData());
-                url = new URL(urlString);
-                setURLToSendToThread(url);
-                getPageData = new GetPageData(this);
-                webDataThread = new Thread(getPageData);
-                webDataThread.run();
-                pageData = getPageData.getPageData();
+                final String urlString = new String(urlPacket.getData());
+
+
             } catch(IOException e) {
                 System.out.println("IO Exception has occurred while receiving url from user.");
             }
@@ -337,4 +333,43 @@ public class Server {
     public URL getURL() {
         return urlToSend;
     }
+
+    private void getDataAndWindowSize(String urlString) {
+        new Thread(() -> {
+            try {
+                URL pageURL = new URL(urlString);
+                sendDataFromThreadToServer(getData(pageURL));
+            } catch (IOException e) {
+                System.out.println("IO Exception occurred while getting the page data.");
+            }
+        },"Data").start();
+
+        new Thread(()-> {
+            boolean received = false;
+            byte[] windowSizeBytes = new byte[512];
+            while(!received) {
+                DatagramPacket windowSizePacket = new DatagramPacket(windowSizeBytes, windowSizeBytes.length);
+                try {
+                    socket.receive(windowSizePacket);
+                } catch (SocketTimeoutException e) {
+                    System.out.println("Socket has timed out. Telling client to resend.");
+                    int badAck = -1;
+                    String badAckString = Integer.toString(badAck);
+                    DatagramPacket badAckPacket = new DatagramPacket(badAckString.getBytes(), badAckString.getBytes().length);
+                    try {
+                        socket.send(badAckPacket);
+                    }catch(IOException io) {
+                        System.out.println("IO Exception occurred while asking client to resend the window size.");
+                    }
+                } catch(IOException e) {
+                    System.out.println("IO Exception occurred while transmitting window size.");
+                }
+            }
+        },"Window");
+    }
+
+    private void sendDataFromThreadToServer(String pageData) {
+        pageDataString = pageData;
+    }
+
 }

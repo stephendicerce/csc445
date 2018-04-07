@@ -1,4 +1,12 @@
-package PACKAGE_NAME;
+public class TransmitData implements Runnable {
+    Server server;
 
-public class TransmitData {
+    TransmitData(Server server) {
+        this.server = server;
+    }
+
+    @Override
+    public void run() {
+
+    }
 }
