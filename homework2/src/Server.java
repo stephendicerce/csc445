@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
     private DatagramSocket socket;
@@ -10,7 +11,10 @@ public class Server {
     private boolean slidingWindows;
     private boolean dropPackets;
     private URL urlToSend;
-    private String pageDataString = "";
+    private String pageDataString;
+    private int windowSize;
+    private AtomicInteger seq = new AtomicInteger();
+    private boolean[] packetSent;
 
     Server(int port, boolean slidingWindows, boolean dropPackets) {
         this.port = port;
@@ -192,6 +196,7 @@ public class Server {
         String numberOfImagesString;
         byte[] numberOfImagesBytes;
 
+
         for(;;) {
             System.out.println("Waiting for URL from user...");
             urlPacket = new DatagramPacket(urlBytes, urlBytes.length);
@@ -202,6 +207,7 @@ public class Server {
 
 
                 final String urlString = new String(urlPacket.getData());
+                getDataAndWindowSize(urlString);
 
 
             } catch(IOException e) {
@@ -351,6 +357,10 @@ public class Server {
                 DatagramPacket windowSizePacket = new DatagramPacket(windowSizeBytes, windowSizeBytes.length);
                 try {
                     socket.receive(windowSizePacket);
+                    String windowSizeString = new String(windowSizePacket.getData());
+                    sendWindowSizeFromThreadToServer(Integer.parseInt(windowSizeString));
+                    received = true;
+
                 } catch (SocketTimeoutException e) {
                     System.out.println("Socket has timed out. Telling client to resend.");
                     int badAck = -1;
@@ -372,4 +382,39 @@ public class Server {
         pageDataString = pageData;
     }
 
+    private void sendWindowSizeFromThreadToServer(int windowSize) {
+        this.windowSize = windowSize;
+    }
+
+    private boolean transmitPageDataToClient(String pageData, int windowSize) {
+        final byte[] pageDataArray = pageData.getBytes();
+        int numberOfPackets = pageDataArray.length/512;
+        packetSent = new boolean[numberOfPackets];
+        for(int i=0; i<packetSent.length; ++i)
+            packetSent[i] = false;
+        for(int i=0; i<windowSize; ++i) {
+            new Thread(()-> {
+
+            },"Transmitter" + i).start();
+        }
+    }
+
+    private byte[] getPacketToSend(String pageData) {
+        byte[] pageDataBytes = pageData.getBytes();
+        int numberOfPackets = pageDataBytes.length/512;
+
+        //boolean array to
+        packetSent = new boolean[numberOfPackets];
+
+        int start = seq.get();
+        if(start % 2 == 0) {
+            if(seq.compareAndSet(start, start+1)){
+
+            }
+        }
+    }
+
+    private boolean[] sendBooleanArrayBackToThread(boolean[] booleanArray) {
+        return
+    }
 }
